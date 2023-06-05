@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>My Images</title>
     <style>
       /* Style the container div */
       .container {
@@ -18,6 +19,19 @@
       .image img {
         width: 100%;
         height: auto;
+      }
+      
+      /* Media query for iPhone */
+      @media only screen and (max-width: 480px) {
+        .container {
+          flex-direction: column;
+          align-items: center;
+        }
+        
+        .image {
+          width: 80%;
+          margin-bottom: 20px;
+        }
       }
     </style>
   </head>
