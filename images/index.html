@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PKMG missions</title>
+    <style>
+      /* Style the container div */
+      .container {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      
+      /* Style the image div */
+      .image {
+        width: 20%;
+        padding: 5px;
+        text-align: center;
+      }
+      
+      /* Style the image */
+      .image img {
+        width: 100%;
+        height: auto;
+      }
+      
+      /* Style the title */
+      .image .title {
+        margin-top: 0;
+      }
+      
+      /* Media query for iPhone */
+      @media only screen and (max-width: 480px) {
+        .container {
+          flex-direction: column;
+          align-items: center;
+        }
+        
+        .image {
+          width: 80%;
+          margin-bottom: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="image">
+        <h3 class="title">October 6 - Tram</h3>
+        <img src="images/20231006_1.jpg" alt="Image 1">
+      </div>
+      <div class="image">
+        <h3 class="title">Fortress Hill - VP - CWB - Wanchai</h3>
+        <img src="images/20231006_2.jpg" alt="Image 2">
+      </div>
+      <div class="image">
+        <h3 class="title">North Point</h3>
+        <img src="images/20231006_3.jpg" alt="Image 3">
+      </div>
+      <div class="image">
+        <h3 class="title">Hill</h3>
+        <img src="images/20231006_4.jpg" alt="Image 4">
+      </div>
+    </div>
+  </body>
+</html>
