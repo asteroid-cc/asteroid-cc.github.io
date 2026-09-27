@@ -1,231 +1,26 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>1228x15696 Image Viewer</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        html {
-            scroll-behavior: smooth;
-            -webkit-tap-highlight-color: transparent;
-            background-color: #090d16;
-        }
-        
-        body {
-            background-color: #090d16;
-            color: #f8fafc;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            /* Support iOS safe area padding for notch and dynamic island */
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
-            -webkit-overflow-scrolling: touch;
-        }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Image</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #fff;
+    }
 
-        /* Hardware accelerated crisp rendering for ultra-tall graphics */
-        .tall-image {
-            image-rendering: -webkit-optimize-contrast;
-            transform: translateZ(0);
-            will-change: transform;
-            transition: max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* iOS Translucent Glassmorphic Toolbar */
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.78);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-        }
-
-        /* Custom Scrollbar for Desktop/Tablet preview */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #090d16;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 9999px;
-        }
-    </style>
+    img {
+      display: block;
+      width: 100%;
+      max-width: 1228px;
+      height: auto;
+      margin: 0 auto;
+    }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-start overflow-x-hidden relative selection:bg-indigo-500 selection:text-white">
-
-    <!-- Floating Minimal Top Bar -->
-    <header id="toolbar" class="fixed top-3 z-50 w-[92%] max-w-md glass-panel rounded-full px-4 py-2.5 shadow-2xl transition-all duration-300">
-        <div class="flex items-center justify-between">
-            <!-- Asset Badge -->
-            <div class="flex items-center space-x-2 pl-1">
-                <span class="relative flex h-2.5 w-2.5">
-                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                </span>
-                <span class="text-[11px] font-semibold tracking-wider uppercase text-slate-300 font-mono">1228×15696</span>
-            </div>
-            
-            <!-- Controls Group -->
-            <div class="flex items-center space-x-1.5">
-                <!-- Zoom Out -->
-                <button id="zoomOutBtn" title="Zoom Out" class="p-2 rounded-full bg-slate-800/80 hover:bg-slate-700 active:scale-90 text-slate-300 transition-all">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7"></path>
-                    </svg>
-                </button>
-
-                <!-- Zoom In -->
-                <button id="zoomInBtn" title="Zoom In" class="p-2 rounded-full bg-slate-800/80 hover:bg-slate-700 active:scale-90 text-slate-300 transition-all">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"></path>
-                    </svg>
-                </button>
-
-                <div class="h-4 w-[1px] bg-slate-700 mx-0.5"></div>
-
-                <!-- Jump to Bottom -->
-                <button id="scrollBottomBtn" title="Jump to Bottom" class="p-2 rounded-full bg-slate-800/80 hover:bg-slate-700 active:scale-90 text-slate-300 transition-all">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-                    </svg>
-                </button>
-
-                <!-- Jump to Top -->
-                <button id="scrollTopBtn" title="Jump to Top" class="p-2 rounded-full bg-indigo-600 hover:bg-indigo-500 active:scale-90 text-white transition-all shadow-md shadow-indigo-600/30">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-                    </svg>
-                </button>
-
-                <!-- Fullscreen Toggle -->
-                <button id="fullscreenBtn" title="Toggle Fullscreen Mode" class="p-2 rounded-full bg-slate-800/80 hover:bg-slate-700 active:scale-90 text-slate-300 transition-all">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Display Area -->
-    <main id="imgContainer" class="w-full max-w-full mx-auto flex flex-col items-center pt-16 pb-12 transition-all duration-300">
-        
-        <!-- Loading State Indicator -->
-        <div id="loader" class="my-32 flex flex-col items-center justify-center space-y-4 px-4 text-center">
-            <div class="relative flex items-center justify-center">
-                <div class="w-12 h-12 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin"></div>
-            </div>
-            <p class="text-xs text-slate-400 font-medium tracking-wide uppercase">Loading /images/test.png...</p>
-        </div>
-
-        <!-- Main Ultra-Tall PNG Asset -->
-        <div class="w-full flex justify-center overflow-hidden">
-            <img 
-                id="tallImage"
-                src="/images/test.png" 
-                alt="Ultra Tall PNG Graphic" 
-                class="tall-image hidden max-w-full h-auto block select-none"
-                loading="eager"
-                decoding="async"
-                onerror="handleImageError(this)"
-            />
-        </div>
-    </main>
-
-    <script>
-        // Global error handler function for img inline onerror attribute
-        function handleImageError(image) {
-            const loader = document.getElementById('loader');
-            if (loader) {
-                loader.innerHTML = `
-                    <div class="p-6 text-center glass-panel rounded-3xl max-w-xs mx-auto my-12 border border-slate-700/50 shadow-2xl">
-                        <div class="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center mx-auto mb-3 text-amber-400">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                            </svg>
-                        </div>
-                        <p class="text-sm font-semibold text-slate-200">Image Not Found</p>
-                        <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">Could not load <code class="text-indigo-400 bg-slate-800 px-1.5 py-0.5 rounded font-mono">/images/test.png</code>. Ensure file is placed correctly in your server path.</p>
-                    </div>
-                `;
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const img = document.getElementById('tallImage');
-            const loader = document.getElementById('loader');
-            const imgContainer = document.getElementById('imgContainer');
-            const zoomInBtn = document.getElementById('zoomInBtn');
-            const zoomOutBtn = document.getElementById('zoomOutBtn');
-            const scrollTopBtn = document.getElementById('scrollTopBtn');
-            const scrollBottomBtn = document.getElementById('scrollBottomBtn');
-            const fullscreenBtn = document.getElementById('fullscreenBtn');
-
-            // Zoom level states in percentage
-            const zoomLevels = ['max-w-md', 'max-w-2xl', 'max-w-full', 'max-w-none'];
-            let currentZoomIndex = 2; // Default to 100% width fit
-
-            if (img.complete) {
-                if (img.naturalWidth > 0) {
-                    onImageLoaded();
-                } else {
-                    handleImageError(img);
-                }
-            } else {
-                img.addEventListener('load', onImageLoaded);
-                img.addEventListener('error', () => handleImageError(img));
-            }
-
-            function onImageLoaded() {
-                loader.classList.add('hidden');
-                img.classList.remove('hidden');
-            }
-
-            // Update zoom class helper
-            function updateZoom() {
-                // Clear existing zoom level classes
-                zoomLevels.forEach(cls => img.classList.remove(cls));
-                // Apply current zoom level class
-                img.classList.add(zoomLevels[currentZoomIndex]);
-            }
-
-            zoomInBtn.addEventListener('click', () => {
-                if (currentZoomIndex < zoomLevels.length - 1) {
-                    currentZoomIndex++;
-                    updateZoom();
-                }
-            });
-
-            zoomOutBtn.addEventListener('click', () => {
-                if (currentZoomIndex > 0) {
-                    currentZoomIndex--;
-                    updateZoom();
-                }
-            });
-
-            // Scroll Actions
-            scrollTopBtn.addEventListener('click', () => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-
-            scrollBottomBtn.addEventListener('click', () => {
-                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-            });
-
-            // Fullscreen Toggle
-            fullscreenBtn.addEventListener('click', () => {
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen().catch(() => {});
-                } else {
-                    if (document.exitFullscreen) {
-                        document.exitFullscreen();
-                    }
-                }
-            });
-        });
-    </script>
+<body>
+  <img src="images/20260928.png" width="1228" height="15696" alt="Long image">
 </body>
 </html>
