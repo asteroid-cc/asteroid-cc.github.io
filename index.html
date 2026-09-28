@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Image</title>
+  <title>Today's Image</title>
   <style>
     html, body {
       margin: 0;
@@ -13,14 +13,22 @@
 
     img {
       display: block;
-      width: 100%;
-      max-width: 1228px;
+      width: 1228px;
+      max-width: 100%;
       height: auto;
       margin: 0 auto;
     }
   </style>
 </head>
 <body>
-  <img src="images/20260928.png" width="1228" height="15696" alt="Long image">
+  <img id="daily-image" width="1228" alt="Today's image">
+  <script>
+    const nowGMT8 = new Date(Date.now() + 8 * 60 * 60 * 1000);
+    const date = nowGMT8.getUTCFullYear().toString()
+      + String(nowGMT8.getUTCMonth() + 1).padStart(2, '0')
+      + String(nowGMT8.getUTCDate()).padStart(2, '0');
+
+    document.getElementById('daily-image').src = `images/${date}.png`;
+  </script>
 </body>
 </html>
