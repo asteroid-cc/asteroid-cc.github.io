@@ -21,6 +21,7 @@
     .image-scroll {
       width: 100%;
       overflow-x: auto;
+      overflow-y: visible;
       -webkit-overflow-scrolling: touch;
     }
 
@@ -33,17 +34,21 @@
     .images img {
       display: block;
       flex: 0 0 auto;
-      width: min(100vw, 1228px);
+      width: auto;
+      max-width: 100vw;
       height: auto;
     }
   </style>
 </head>
 <body>
   <header id="date-banner"></header>
+
   <main class="image-scroll" aria-label="Daily images; scroll horizontally for more">
     <div class="images" id="images"></div>
   </main>
+
   <script>
+    // Use UTC methods after adding 8 hours, so the date is always GMT+8.
     const nowGMT8 = new Date(Date.now() + 8 * 60 * 60 * 1000);
     const year = nowGMT8.getUTCFullYear();
     const month = String(nowGMT8.getUTCMonth() + 1).padStart(2, '0');
@@ -51,29 +56,44 @@
     const date = `${year}${month}${day}`;
 
     document.getElementById('date-banner').textContent = `${year}-${month}-${day}`;
+
     const container = document.getElementById('images');
 
-    const first = document.createElement('img');
-    first.src = `images/${date}.png`;
-    first.alt = 'Image 1';
-    container.appendChild(first);
+    function addImage(src, number) {
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = `Image ${number}`;
+      container.appendChild(img);
+    }
 
+    // The main image is always displayed.
+    addImage(`images/${date}.png`, 1);
+
+    // Add images 2 to 8 only if their files exist.
     function loadOptionalImage(number) {
       return new Promise(resolve => {
         const img = new Image();
-        img.alt = `Image ${number}`;
-        img.onload = () => resolve(img);
+
+        img.onload = () => resolve({
+          src: `images/${date}-${number}.png`,
+          number
+        });
+
         img.onerror = () => resolve(null);
+
         img.src = `images/${date}-${number}.png`;
       });
     }
 
-    Promise.all(Array.from({ length: 7 }, (_, i) => loadOptionalImage(i + 2)))
-      .then(images => {
-        images.forEach(img => {
-          if (img) container.appendChild(img);
-        });
+    Promise.all(
+      Array.from({ length: 7 }, (_, index) => loadOptionalImage(index + 2))
+    ).then(results => {
+      results.forEach(result => {
+        if (result) {
+          addImage(result.src, result.number);
+        }
       });
+    });
   </script>
 </body>
 </html>
