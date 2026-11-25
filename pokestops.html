@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-HK"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pokestop Map</title>
+<!DOCTYPE html><html lang="zh-HK"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pokestop Coordinates</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><style>
 :root{--card:#1e293b;--ac:#38bdf8;--tx:#e2e8f0;--mut:#94a3b8}
 *{box-sizing:border-box}html,body{height:100%}body{margin:0;font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;background:#0f172a;color:var(--tx);display:flex;flex-direction:column}
@@ -30,7 +30,7 @@ baseLayers['Street Map (Esri)'].addTo(map);
 L.control.layers(baseLayers).addTo(map);
 const layer=L.layerGroup().addTo(map);let M={};
 const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function sel(i,fly){document.querySelectorAll('.card.on').forEach(e=>e.classList.remove('on'));const c=document.getElementById('c'+i);if(c){c.classList.add('on');c.scrollIntoView({block:'nearest',behavior:'smooth'})}
+function sel(i,fly){document.querySelectorAll('.card.on').forEach(e=>e.classList.remove('on'));const c=document.getElementById('c'+i);if(c){c.classList.add('on');c.scrollIntoView({block:'nearest',behavior:'instant'})}
  if(M[i]){if(fly)map.flyTo(M[i].getLatLng(),Math.max(map.getZoom(),17));M[i].openPopup()}}
 function mk(d,i){const m=L.circleMarker([d[1],d[2]],{radius:7,color:'#0f172a',weight:1.5,fillColor:COL[d[3]],fillOpacity:.9}).addTo(layer);
  m.bindPopup(`<b>${esc(d[0])}</b><br>${d[1]}, ${d[2]}`);m.on('click',()=>sel(i,false));M[i]=m}
